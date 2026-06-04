@@ -838,6 +838,6 @@ mod tests {
         
         assert_eq!(number_tokens.len(), 1);
         assert_eq!(number_tokens[0].literal.as_deref(), Some("255"),
-                   "Decimal literals should work correctly");
+                          "Decimal literals should work correctly");
     }
 }
