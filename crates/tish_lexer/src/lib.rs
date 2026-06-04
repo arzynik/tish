@@ -174,6 +174,39 @@ impl<'a> Lexer<'a> {
     fn read_number(&mut self, first: char) -> String {
         let mut s = String::with_capacity(16);
         s.push(first);
+        
+        // Check for hex (0x/0X) or binary (0b/0B) prefix
+        if first == '0' {
+            if let Some(prefix) = self.peek() {
+                if prefix == 'x' || prefix == 'X' {
+                    // Hex literal
+                    s.push(self.advance().unwrap());
+                    while let Some(c) = self.peek() {
+                        if c.is_ascii_hexdigit() {
+                            s.push(c);
+                            self.advance();
+                        } else {
+                            break;
+                        }
+                    }
+                    return s;
+                } else if prefix == 'b' || prefix == 'B' {
+                    // Binary literal
+                    s.push(self.advance().unwrap());
+                    while let Some(c) = self.peek() {
+                        if c == '0' || c == '1' {
+                            s.push(c);
+                            self.advance();
+                        } else {
+                            break;
+                        }
+                    }
+                    return s;
+                }
+            }
+        }
+        
+        // Regular decimal number (with optional decimal point)
         while let Some(c) = self.peek() {
             if c.is_ascii_digit() || c == '.' {
                 s.push(c);
