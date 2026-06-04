@@ -1,0 +1,39 @@
+// UNABLE TO CREATE ACCURATE TEST WITHOUT REPOSITORY ACCESS
+// Filed capability request: tkt-UUV7GnghJ3
+//
+// The test below is a TEMPLATE based on the bug description.
+// It needs to be adapted to the actual project's:
+// - Programming language (Rust/Go/C++/etc)
+// - Test framework
+// - Lexer API
+// - File extension and location
+
+// Bug: Hex (0xFF) and binary (0b1010) literals fail to lex
+// They are split into: numeric '0' + identifier 'xFF'/'b1010'
+// Expected: Single numeric token
+
+test_hex_literal_lexing() {
+    // These should each produce ONE numeric token, not two tokens
+    let tokens1 = lex("let v = 0xFF");
+    assert_no_identifier_token(tokens1, "xFF");
+    assert_has_numeric_token(tokens1, 255);
+    
+    let tokens2 = lex("let v = 0xff");
+    assert_no_identifier_token(tokens2, "xff");
+    assert_has_numeric_token(tokens2, 255);
+    
+    let tokens3 = lex("let v = 0xFFFFFF");
+    assert_no_identifier_token(tokens3, "xFFFFFF");
+    assert_has_numeric_token(tokens3, 16777215);
+}
+
+test_binary_literal_lexing() {
+    let tokens = lex("let v = 0b1010");
+    assert_no_identifier_token(tokens, "b1010");
+    assert_has_numeric_token(tokens, 10);
+}
+
+test_decimal_still_works() {
+    let tokens = lex("let v = 255");
+    assert_has_numeric_token(tokens, 255);
+}
